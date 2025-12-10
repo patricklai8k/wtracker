@@ -1,50 +1,99 @@
-# Welcome to your Expo app 👋
+# Workout Tracker
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A daily workout tracking app built with React Native and Expo. Track your daily workouts with a simple, intuitive interface that resets every day.
 
-## Get started
+## Features
 
-1. Install dependencies
+- **Daily Workout List**: View all your workout types in an easy-to-read list
+- **One-Tap Completion**: Tap any workout to mark it as complete
+- **Daily Reset**: Completed workouts automatically reset each day, giving you a fresh start
+- **Custom Workouts**: Add your own workout types with custom names and images
+- **Image Selection**: Choose images from your photo library or take new photos
+- **Persistent Storage**: Your workouts are saved locally and persist across app restarts
+- **Long Press to Delete**: Hold down on any workout to delete it
 
-   ```bash
-   npm install
-   ```
+## How to Use
 
-2. Start the app
+### Main Screen
+- **View Workouts**: See all your workout types listed on the main screen
+- **Complete Workout**: Tap on a workout card to mark it as completed (appears with a green checkmark)
+- **Uncomplete**: Tap a completed workout again to mark it as incomplete
+- **Delete Workout**: Long press on any workout to delete it
 
-   ```bash
-   npx expo start
-   ```
+### Adding New Workouts
+1. Tap the "Add Workout" button at the bottom of the main screen
+2. Enter a name for your workout (e.g., "Push-ups", "Running", "Yoga")
+3. Tap the image area to select a photo:
+   - Choose "Take Photo" to capture a new image
+   - Choose "Choose from Library" to select an existing photo
+4. Tap "Save Workout" to add it to your daily list
 
-In the output, you'll find options to open the app in a
+## Getting Started
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Prerequisites
+- Node.js
+- npm or yarn
+- Expo CLI
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+### Installation
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Running the App
 
-## Learn more
+```bash
+# Start the Expo development server
+npm start
 
-To learn more about developing your project with Expo, look at the following resources:
+# Run on iOS simulator
+npm run ios
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+# Run on Android emulator
+npm run android
 
-## Join the community
+# Run in web browser
+npm run web
+```
 
-Join our community of developers creating universal apps.
+## Tech Stack
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+- **React Native**: Mobile framework
+- **Expo**: Development platform
+- **Expo Router**: File-based navigation
+- **AsyncStorage**: Local data persistence
+- **Expo Image Picker**: Image selection and camera access
+- **TypeScript**: Type-safe development
+
+## Project Structure
+
+```
+app/
+  ├── _layout.tsx          # Navigation configuration
+  ├── index.tsx            # Main workout list screen
+  └── add-workout.tsx      # Add new workout screen
+
+hooks/
+  └── useWorkouts.ts       # Custom hook for workout management
+
+types/
+  └── workout.ts           # TypeScript interfaces
+
+assets/
+  └── images/              # App images and icons
+```
+
+## How It Works
+
+### Daily Reset
+The app automatically detects when a new day begins and resets all workout completions. The completion status is stored with the current date, and when the app loads, it checks if the stored date matches today's date. If not, the completion list is cleared.
+
+### Data Storage
+- **Workouts**: Stored in AsyncStorage with workout details (id, name, image URI, creation date)
+- **Daily Completions**: Stored separately with the date and list of completed workout IDs
+- Data persists across app restarts and updates in real-time
+
+## License
+
+MIT
