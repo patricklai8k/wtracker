@@ -5,15 +5,19 @@ module.exports = function withWorkoutWidgetMainApplication(config) {
     const { modResults } = config;
     let contents = modResults.contents;
 
+    // Extract the package name from the file
+    const packageMatch = contents.match(/package\s+([\w.]+)/);
+    const packageName = packageMatch ? packageMatch[1] : 'com.anonymous.wtracker';
+
     // Add import statement
-    if (!contents.includes('import com.wtracker.WorkoutWidgetPackage')) {
+    if (!contents.includes('WorkoutWidgetPackage')) {
       // Find the package declaration line and add import after it
-      const packageMatch = contents.match(/(package\s+[\w.]+\s*\n)/);
-      if (packageMatch) {
-        const insertIndex = packageMatch.index + packageMatch[0].length;
+      const packageLineMatch = contents.match(/(package\s+[\w.]+\s*\n)/);
+      if (packageLineMatch) {
+        const insertIndex = packageLineMatch.index + packageLineMatch[0].length;
         contents = 
           contents.slice(0, insertIndex) + 
-          '\nimport com.wtracker.WorkoutWidgetPackage\n' + 
+          '\nimport ' + packageName + '.WorkoutWidgetPackage\n' + 
           contents.slice(insertIndex);
       }
     }

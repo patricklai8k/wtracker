@@ -1,5 +1,7 @@
-const { withAndroidManifest } = require('@expo/config-plugins');
+const { withAndroidManifest, withStringsXml } = require('@expo/config-plugins');
 const withMainApplication = require('./withMainApplication');
+const withAndroidWidgetResources = require('./withAndroidWidgetResources');
+const withAndroidWidgetKotlin = require('./withAndroidWidgetKotlin');
 
 function addWidgetReceiver(androidManifest) {
   const { manifest } = androidManifest;
@@ -49,7 +51,22 @@ const withAndroidWidget = (config) => {
     return config;
   });
 
-  // Add package to MainApplication.kt
+  // Add widget description string
+  config = withStringsXml(config, (config) => {
+    config.modResults.resources.string.push({
+      $: { name: 'widget_description' },
+      _: 'Track your daily workout progress'
+    });
+    return config;
+  });
+
+  // Copy widget Kotlin source files FIRST (before MainApplication modification)
+  config = withAndroidWidgetKotlin(config);
+
+  // Copy widget resources
+  config = withAndroidWidgetResources(config);
+
+  // Add package to MainApplication.kt (after Kotlin files exist)
   config = withMainApplication(config);
 
   return config;
