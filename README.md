@@ -1,6 +1,6 @@
 # Workout Tracker
 
-A daily workout tracking app built with React Native and Expo. Track your daily workouts with a simple, intuitive interface that resets every day.
+A daily workout tracking app built with React Native and Expo. Track your daily workouts with a simple, intuitive interface that resets every day!
 
 ## Features
 
