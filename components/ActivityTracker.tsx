@@ -1,5 +1,5 @@
 import { ActivityDay } from '@/types/workout';
-import { useEffect, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 interface ActivityTrackerProps {
@@ -8,11 +8,19 @@ interface ActivityTrackerProps {
   isDark: boolean;
 }
 
+// Helper function to format date in local timezone as YYYY-MM-DD
+const formatLocalDate = (date: Date): string => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 export default function ActivityTracker({ activityHistory, currentCompletedCount, isDark }: ActivityTrackerProps) {
   const scrollViewRef = useRef<ScrollView>(null);
 
   // Generate calendar grid for each of the last 6 months
-  const generateMonthGrids = () => {
+  const monthGrids = useMemo(() => {
     const today = new Date();
     const months: {
       month: string;
@@ -45,8 +53,8 @@ export default function ActivityTracker({ activityHistory, currentCompletedCount
       // Add all days in the month
       for (let day = 1; day <= lastDay.getDate(); day++) {
         const currentDate = new Date(year, month, day);
-        const dateString = currentDate.toISOString().split('T')[0];
-        const todayString = today.toISOString().split('T')[0];
+        const dateString = formatLocalDate(currentDate);
+        const todayString = formatLocalDate(today);
         const isToday = dateString === todayString;
         
         // Don't show future days
@@ -77,7 +85,7 @@ export default function ActivityTracker({ activityHistory, currentCompletedCount
     }
     
     return months;
-  };
+  }, [activityHistory, currentCompletedCount]);
 
   const getColorForCount = (count: number): string => {
     if (isDark) {
@@ -96,8 +104,6 @@ export default function ActivityTracker({ activityHistory, currentCompletedCount
       return '#216e39'; // 4+ workouts
     }
   };
-
-  const monthGrids = generateMonthGrids();
   
   const colors = {
     background: isDark ? '#1e1e1e' : '#fff',
@@ -118,7 +124,12 @@ export default function ActivityTracker({ activityHistory, currentCompletedCount
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-      <Text style={[styles.title, { color: colors.text }]}>Activity - Last 6 Months</Text>
+      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+        <Text style={[styles.title, { color: colors.text }]}>Activity - Last 6 Months</Text>
+        <Text style={{ color: colors.textSecondary, fontSize: 12 }}>
+          Today: {currentCompletedCount} workouts
+        </Text>
+      </View>
       
       <ScrollView
         ref={scrollViewRef}

@@ -33,12 +33,30 @@
             android:textColor="?android:attr/textColorPrimary" />
     </LinearLayout>
 
-    <GridLayout
-        android:id="@+id/activity_grid"
+    <TextView
+        android:id="@+id/widget_activity_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Activity - Last 8 Weeks"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:paddingBottom="8dp"
+        android:textColor="?android:attr/textColorPrimary" />
+
+    <HorizontalScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:columnCount="7"
-        android:rowCount="8"
-        android:layout_gravity="center" />
+        android:scrollbars="none">
+
+        <GridLayout
+            android:id="@+id/activity_grid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:columnCount="8"
+            android:rowCount="7"
+            android:columnOrderPreserved="false"
+            android:useDefaultMargins="false" />
+
+    </HorizontalScrollView>
 
 </LinearLayout>

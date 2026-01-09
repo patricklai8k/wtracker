@@ -17,7 +17,10 @@ export function useWorkouts() {
 
   const getTodayDate = () => {
     const today = new Date();
-    return today.toISOString().split('T')[0];
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
   };
 
   const loadData = async () => {
@@ -74,22 +77,38 @@ export function useWorkouts() {
 
   const saveCompletion = async (ids: string[]) => {
     try {
+      const today = getTodayDate();
       const completion: DailyCompletion = {
-        date: getTodayDate(),
+        date: today,
         completedWorkoutIds: ids,
       };
       await AsyncStorage.setItem(DAILY_COMPLETION_KEY, JSON.stringify(completion));
 
       // Update today's activity count in history
-      await updateActivityHistory(getTodayDate(), ids.length);
+      await updateActivityHistory(today, ids.length);
 
       // Update Android widget
       if (Platform.OS === 'android' && WorkoutWidget) {
         try {
-          WorkoutWidget.updateWidget();
+          console.log('📱 Calling widget update...');
+          
+          // Get all the data to pass to the widget
+          const [workoutsData, historyData] = await Promise.all([
+            AsyncStorage.getItem(WORKOUTS_KEY),
+            AsyncStorage.getItem(ACTIVITY_HISTORY_KEY),
+          ]);
+          
+          WorkoutWidget.updateWidget({
+            workouts: workoutsData || '[]',
+            daily_completion: JSON.stringify(completion),
+            activity_history: historyData || '[]',
+          });
+          console.log('✅ Widget update called successfully');
         } catch (error) {
           console.warn('Failed to update widget:', error);
         }
+      } else {
+        console.log('⚠️ Widget module not available:', { os: Platform.OS, hasModule: !!WorkoutWidget });
       }
     } catch (error) {
       console.error('Error saving completion:', error);
