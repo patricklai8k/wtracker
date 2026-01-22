@@ -1,9 +1,6 @@
 import { ActivityDay, DailyCompletion, Workout } from '@/types/workout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { NativeModules, Platform } from 'react-native';
-
-const { WorkoutWidget } = NativeModules;
 
 const WORKOUTS_KEY = '@workouts';
 const DAILY_COMPLETION_KEY = '@daily_completion';
@@ -86,30 +83,6 @@ export function useWorkouts() {
 
       // Update today's activity count in history
       await updateActivityHistory(today, ids.length);
-
-      // Update Android widget
-      if (Platform.OS === 'android' && WorkoutWidget) {
-        try {
-          console.log('📱 Calling widget update...');
-          
-          // Get all the data to pass to the widget
-          const [workoutsData, historyData] = await Promise.all([
-            AsyncStorage.getItem(WORKOUTS_KEY),
-            AsyncStorage.getItem(ACTIVITY_HISTORY_KEY),
-          ]);
-          
-          WorkoutWidget.updateWidget({
-            workouts: workoutsData || '[]',
-            daily_completion: JSON.stringify(completion),
-            activity_history: historyData || '[]',
-          });
-          console.log('✅ Widget update called successfully');
-        } catch (error) {
-          console.warn('Failed to update widget:', error);
-        }
-      } else {
-        console.log('⚠️ Widget module not available:', { os: Platform.OS, hasModule: !!WorkoutWidget });
-      }
     } catch (error) {
       console.error('Error saving completion:', error);
     }
@@ -148,15 +121,6 @@ export function useWorkouts() {
     };
     const updatedWorkouts = [...workouts, newWorkout];
     await saveWorkouts(updatedWorkouts);
-
-    // Update Android widget
-    if (Platform.OS === 'android' && WorkoutWidget) {
-      try {
-        WorkoutWidget.updateWidget();
-      } catch (error) {
-        console.warn('Failed to update widget:', error);
-      }
-    }
   };
 
   const toggleCompletion = async (workoutId: string) => {
@@ -177,15 +141,6 @@ export function useWorkouts() {
       const newCompletedIds = completedIds.filter(id => id !== workoutId);
       setCompletedIds(newCompletedIds);
       await saveCompletion(newCompletedIds);
-    }
-
-    // Update Android widget
-    if (Platform.OS === 'android' && WorkoutWidget) {
-      try {
-        WorkoutWidget.updateWidget();
-      } catch (error) {
-        console.warn('Failed to update widget:', error);
-      }
     }
   };
 
